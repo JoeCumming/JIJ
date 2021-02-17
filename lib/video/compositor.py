@@ -52,33 +52,34 @@ class CompositeVideoCreator:
         self.title_logo = title_logo
         self.answer_logo = answer_logo
 
-    def createCompositeInteview(self, url:str, outfile:str=None, framerate=25, bitrate=None, audio_bitrate=None):
+    def createCompositeInteview(self, url:str, outpath:str=None, framerate=25, bitrate=None, audio_bitrate=None):
 
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
 
         name = self.getApplicantName(soup)
-        outfile = outfile if outfile != None else os.path.join(tempfile.gettempdir(), "{}_complete.mp4".format(name.replace(" ", "_")))
+        outfile = os.path.join(outpath if outpath != None else tempfile.gettempdir(), "{}_complete.mp4".format(name.replace(" ", "_")))
 
-        answervideos = self.getApplicantVideos(soup, name)
-        
-        videoprops = self.getVideoProperties(answervideos[0].video)
-        targetsize = answervideos[0].getSize()        
-        bitrate = bitrate if not bitrate is None else answervideos[0].getBitrate()
-        audio_bitrate = audio_bitrate if not audio_bitrate is None else answervideos[0].getAudioBitrate()
-        answerlogoclip = self.getAnswerLogoClip()
-        fontscale = targetsize.height / CompositeVideoCreator.REFERENCE_HEIGHT
-        answerfontsize = int(CompositeVideoCreator.BASE_ANSWER_FONTSIZE * fontscale)
-        titlefontsize = int(CompositeVideoCreator.BASE_TITLE_FONTSIZE * fontscale)        
+        if not os.path.exists(outfile) :
+            answervideos = self.getApplicantVideos(soup, name)
+            
+            videoprops = self.getVideoProperties(answervideos[0].video)
+            targetsize = answervideos[0].getSize()        
+            bitrate = bitrate if not bitrate is None else answervideos[0].getBitrate()
+            audio_bitrate = audio_bitrate if not audio_bitrate is None else answervideos[0].getAudioBitrate()
+            answerlogoclip = self.getAnswerLogoClip()
+            fontscale = targetsize.height / CompositeVideoCreator.REFERENCE_HEIGHT
+            answerfontsize = int(CompositeVideoCreator.BASE_ANSWER_FONTSIZE * fontscale)
+            titlefontsize = int(CompositeVideoCreator.BASE_TITLE_FONTSIZE * fontscale)        
 
-        answer_clips = [answer.createVideoClip(targetsize, answerfontsize, answerlogoclip) for answer in answervideos]
-        opening_clip = [self.createTitleClip(name, targetsize, titlefontsize, self.getTitleLogoClip(80 * fontscale))]
-        closing_clip = [self.createClosingClip(targetsize, titlefontsize, self.getClosingLogoClip(50 * fontscale))]
-        clips = opening_clip + answer_clips + closing_clip
-        
-        final_clip = concatenate_videoclips(clips)
-        logging.info("Writing concatenated video to {}".format(outfile))
-        final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate)
+            answer_clips = [answer.createVideoClip(targetsize, answerfontsize, answerlogoclip) for answer in answervideos]
+            opening_clip = [self.createTitleClip(name, targetsize, titlefontsize, self.getTitleLogoClip(80 * fontscale))]
+            closing_clip = [self.createClosingClip(targetsize, titlefontsize, self.getClosingLogoClip(50 * fontscale))]
+            clips = opening_clip + answer_clips + closing_clip
+            
+            final_clip = concatenate_videoclips(clips)
+            logging.info("Writing concatenated video to {}".format(outfile))
+            final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate)
 
         return outfile
         
