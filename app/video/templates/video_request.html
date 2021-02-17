@@ -9,7 +9,8 @@
   <body>
     <h1><img height="60px" src="{{ url_for('static', filename = 'logo.png')}}"/> JIJ Video Services</h1>
     <p>To create a composite video enter the url of the candidate, e.g. https://jobsinjapan.hiringplatformau.com/p/8CjOM29RPwZa/167543-jamaica-segundo</p>    
-    <p>After a minute or so the composite video will be created and downloaded</p>
+    <p>The composite video can take up to 10 minutes to build depending on the size of the original</p>
+    <p>Please refresh the video selection screen periodically until is is ready</p>
     <form action="/video/compose" method="post">
       <input type="text" id="candidate_url" name="candidate_url" style="width:65%"></input>
       <input type="submit" value="Submit">
