@@ -1,0 +1,3 @@
+DEBUG=True
+APP_USER='app'
+SECRET_KEY='SECRET'

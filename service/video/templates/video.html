@@ -1,0 +1,22 @@
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="icon" href="data:,">
+    <title>Video home</title>
+  </head>
+
+  <body>
+    <h1><img height="60px" src="{{ url_for('static', filename = 'logo.png')}}"/> JIJ Video Services</h1>
+    <p>To create a composite video send a POST request to http://[server]/video/compose with a json request in the body : </p>
+    <p> {
+      "candidate_url": " the url of the candidate interview "
+    }    
+    </p>   
+    <p>e.g.</p> 
+    <p> {
+      "candidate_url": "https://jobsinjapan.hiringplatformau.com/p/8CjOM29RPwZa/167543-jamaica-segundo"
+    }    
+    </p>
+  </body>
+</html>
