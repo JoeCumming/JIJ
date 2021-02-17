@@ -6,7 +6,12 @@ RUN apk --update add \
     build-base \
     jpeg-dev \
     zlib-dev \
-    ffmpeg
+    ffmpeg \
+    imagemagick
+
+# Install fonts
+RUN apk --no-cache add font-noto && \
+    fc-cache -f
 
 RUN pip install --upgrade pip
 RUN pip install --upgrade google-api-python-client

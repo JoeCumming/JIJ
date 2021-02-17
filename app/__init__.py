@@ -1,7 +1,7 @@
 from flask import Flask, make_response, jsonify
 
-from service.main.controller import main
-from service.video.controller import video
+from app.main.controller import main
+from app.video.controller import video
 
 app = Flask(__name__, static_url_path = "", instance_relative_config=True)
 app.config.from_object('config')

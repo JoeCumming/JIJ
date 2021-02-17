@@ -23,7 +23,7 @@ class Answer:
         self.audioprops = get_audio_properties(video)
 
     def createVideoClip(self, videosize: Size, fontsize:int, logo):
-        title = (TextClip(self.question, fontsize=fontsize, font="Ubuntu-Regular", color='white', size=(videosize.height*0.9, videosize.width*0.25), method="caption")
+        title = (TextClip(self.question, fontsize=fontsize, font="Noto-Sans-Regular", color='white', size=(videosize.height*0.9, videosize.width*0.25), method="caption")
                     .set_position(('center',0.6), relative=True)
                     .set_duration(4)
                     .fadein(1).fadeout(1))
@@ -130,8 +130,8 @@ class CompositeVideoCreator:
 
     def createTitleClip(self, name: str,  size: Size, fontsize: int,logo: ImageClip):
         background = ColorClip((size.width, size.height))
-        titleclip = TextClip(name, fontsize=fontsize, font="Ubuntu-Regular", color='white').set_position('center')
-        subtitleclip = (TextClip("First round interview", fontsize=15, font="Ubuntu-Regular", color='white')
+        titleclip = TextClip(name, fontsize=fontsize, font="Noto-Sans-Regular", color='white').set_position('center')
+        subtitleclip = (TextClip("First round interview", fontsize=15, font="Noto-Sans-Regular", color='white')
                         .set_position(('center',0.55), relative=True))
                     
         return CompositeVideoClip([background, titleclip, subtitleclip, logo]).set_duration(3).fadein(1).fadeout(1) 
@@ -146,7 +146,7 @@ class CompositeVideoCreator:
 
     def createClosingClip(self, size:Size, fontsize:int, logo:ImageClip):
         background = ColorClip((size.width, size.height))
-        clip = TextClip("www.jobsinjapan.com", fontsize=fontsize, font="Ubuntu-Regular", color='white').set_position('center')            
+        clip = TextClip("www.jobsinjapan.com", fontsize=fontsize, font="Noto-Sans-Regular", color='white').set_position('center')            
         video = CompositeVideoClip([background, clip, logo]).set_duration(5).fadein(1).fadeout(1)           
         return video
 

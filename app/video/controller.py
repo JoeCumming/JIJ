@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, abort, request, make_response, render_template
 
-from service.auth import auth
+#from app.auth import auth
 from lib.video.compositor import CompositeVideoCreator
 
 video = Blueprint('video', __name__, url_prefix="video", template_folder="templates")
