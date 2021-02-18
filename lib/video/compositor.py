@@ -39,6 +39,9 @@ class Answer:
     def getAudioBitrate(self):
         return self.audioprops['bit_rate']
 
+    def __del__(self):
+        os.unlink(self.video)
+
 
 class CompositeVideoCreator:
     
