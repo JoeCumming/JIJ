@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, abort, request, make_response, url_for, send_file, render_template, current_app, redirect
 from concurrent.futures import ThreadPoolExecutor
-from os import listdir
+from os import listdir, remove
 from os.path import basename, join, isfile, getsize, getctime
 import time
 import logging
@@ -40,6 +40,20 @@ def download(id):
     try:
         video = join(current_app.root_path, 'static', 'video', id)            
         return send_file(video, attachment_filename=basename(id), as_attachment=True), 201
+    except Exception as e:
+        return str(e), 500
+
+
+@video.route('/delete/<id>')
+#@auth.login_required
+def delete(id):
+    if not id:
+        abort(400)
+        
+    try:
+        video = join(current_app.root_path, 'static', 'video', id)            
+        remove(video)
+        return redirect(url_for('video.index'))
     except Exception as e:
         return str(e), 500
 

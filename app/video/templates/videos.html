@@ -15,13 +15,15 @@
         <tr>
           <td>Name</td>          
           <td>Size</td>          
-          <td>Creation Time</td>          
+          <td>Creation Time</td>       
+          <td></td>   
         </tr>
       {% for video in videos %}
         <tr>
           <td> <a href="/video/download/{{video.name}}">{{ video.name }}</a></td>          
           <td> {{ video.size }} </td>          
           <td> {{ video.timestr() }} </td>          
+          <td> <a href="/video/delete/{{video.name}}">Delete</a></td>          
         </tr>
       {% endfor %}
       </table>      
