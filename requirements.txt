@@ -1,6 +1,13 @@
 Flask==1.1.2
+Flask-SQLAlchemy===2.4.1 
+Flask-Migrate==2.5.2
+Flask-Script==2.0.6
+Flask-Socketio==4.3.2
+python-engineio==3.13.2
 beautifulsoup4==4.9.3
 moviepy==2.0.0.dev2
 requests==2.25.1
-flask-httpauth
-get-video-properties
+psycopg2-binary==2.8.6
+flask-httpauth==4.2.0
+get-video-properties==0.1.1
+youtube_video_upload==0.2.0

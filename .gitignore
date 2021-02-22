@@ -1,4 +1,7 @@
 instance/**
+migrations/**
+supervisor.pid
+app.db
 .DS_Store
 .huskyrc.json
 out
@@ -43,3 +46,4 @@ debugpy*.log
 pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
+*.mp4

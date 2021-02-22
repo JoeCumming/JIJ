@@ -5,12 +5,28 @@
     <link rel="icon" href="data:,">
     <title>Video home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.0/socket.io.dev.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket;
+      $(document).ready(function() {
+          socket = io.connect('http://' + document.domain + ':' + location.port + '/events');          
+          socket.on('status', function(data) {
+              $('#status').html(data.msg);              
+          });          
+      });
+  </script>
+
   </head>
 
   <body>
-    <h1><img height="60px" src="{{ url_for('static', filename = 'logo.png')}}"/> JIJ Video Services</h1>
+    <h1><img src="{{ url_for('static', filename = 'logo.png')}}"/> JIJ Video Services</h1>
     <h2>Available Videos</h2>        
-    <form action="/video/compose" method="post">      
+    <form action="/video/compose" method="post">     
+      <div id="status">
+
+      </div> 
       <table>
         <tr>
           <td>Name</td>          
@@ -20,10 +36,10 @@
         </tr>
       {% for video in videos %}
         <tr>
-          <td> <a href="/video/download/{{video.name}}">{{ video.name }}</a></td>          
-          <td> {{ video.size }} </td>          
-          <td> {{ video.timestr() }} </td>          
-          <td> <a href="/video/delete/{{video.name}}">Delete</a></td>          
+          <td> <a href="/video/download/{{video.id}}">{{ video.composite_url }}</a></td>          
+          <td> {{ video.youtube_url }} </td>          
+          <td> {{ video.jij_url }} </td>          
+          <td> <a href="/video/delete/{{video.id}}">Delete</a></td>          
         </tr>
       {% endfor %}
       </table>      

@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      #target: debug
+    ports:
+      - "4000:4000"
+      - "5000:5000"
+      - "80:80"
+    volumes:
+      - .:/usr/src
+    environment:
+      FLASK_APP: /usr/src/app.py
+      FLASK_ENV: development
+      DATABASE_URL: sqlite:////usr/src/app.db
+      #DATABASE_URL: postgresql:///testdb
+    command: python -m ptvsd --host 0.0.0.0 --port 4000 --wait --multiprocess -m flask run --host=0.0.0.0 --port=5000 --no-debugger --no-reload

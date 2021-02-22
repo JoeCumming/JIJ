@@ -12,8 +12,35 @@
     <p>The composite video can take up to 10 minutes to build depending on the size of the original</p>
     <p>Please refresh the video selection screen periodically until is is ready</p>
     <form action="/video/compose" method="post">
-      <input type="text" id="candidate_url" name="candidate_url" style="width:65%"></input>
-      <input type="submit" value="Submit">
+      <table style="width:90%">
+        <tr>
+          <td><label for="candidate_url">URL</label></td>
+          <td style="width:90%"><input type="text" id="candidate_url" name="candidate_url" style="width:65%"></input></td>
+        </tr>
+        <tr>
+          <td><label for="load">Load to YouTube?</label></td>
+          <td><input type="checkbox" id="load" name="load"></input></td>
+        </tr>
+        <tr>
+          <td><label for="title">Name</label></td>
+          <td><input type="text" id="name" name="name" style="width:45%"></input></td>
+        </tr>
+        <tr>
+          <td><label for="title">Title</label></td>
+          <td><input type="text" id="title" name="title" style="width:45%"></input></td>
+        </tr>
+        <tr>
+          <td><label for="category">Category</label></td>
+          <td><select id="category" name="category">        
+        {% for category in categories.keys() %}
+        <option value="{{category}}">{{category}}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Submit"></td>
+        </tr>        
+      </table>
+      
+      
     </form>
   </body>
 </html>

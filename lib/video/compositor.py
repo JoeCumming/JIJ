@@ -43,7 +43,7 @@ class Answer:
         os.unlink(self.video)
 
 
-class CompositeVideoCreator:
+class CompositeVideoCreator(object):
     
     REFERENCE_HEIGHT = 360
     BASE_ANSWER_FONTSIZE = 18
@@ -61,7 +61,7 @@ class CompositeVideoCreator:
         soup = BeautifulSoup(page.content, 'html.parser')
 
         name = self.getApplicantName(soup)
-        outfile = os.path.join(outpath if outpath != None else tempfile.gettempdir(), "{}_complete.mp4".format(name.replace(" ", "_")))
+        outfile = outpath if outpath != None else os.path.join(tempfile.gettempdir(), "{}_complete.mp4".format(name.replace(" ", "_")))
 
         if not os.path.exists(outfile) :
             answervideos = self.getApplicantVideos(soup, name)
