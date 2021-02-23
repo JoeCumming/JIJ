@@ -1,0 +1,52 @@
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="icon" href="data:,">    
+    <link rel="stylesheet" href="https://jobsinjapan.com/wpdata/wp-content/uploads/noo_jobmonster/custom.css?ver=1.0.72">
+    <link rel="stylesheet" href="https://jobsinjapan.com/wpdata/wp-content/themes/noo-jobmonster/assets/css/noo.css?ver=1.0.72">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}   
+  </head>
+
+  <body class="home">     
+    <div class="site">
+        <header class="noo-header header-1" id="noo-header" style="position: relative;">
+            <div class="navbar-wrapper" style="min-height: 80px;">
+                <div class="navbar navbar-default fixed-top shrinkable" role="navigation">
+                    <div class="container-boxed max">
+                    <a href="/" class="navbar-brand" title="Get a (better) job in Japan now">
+                        <img class="noo-logo-img noo-logo-normal" src="{{ url_for('static', filename = 'logo.png')}}" alt="">
+                    </a>                                        
+                    <nav class="collapse navbar-collapse noo-navbar-collapse">
+                        <ul id="menu-candidate-menu" class="navbar-nav sf-menu sf-js-enabled sf-arrows"><li id="menu-item-15143" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15143 align-right"><a href="/video">Video Services</a></li>                                        
+                    </nav> 
+                    </div>
+                </div>                
+            </div>
+        </header>
+        <div class="container-wrap">
+            <div class="main-content container-fullwidth">
+                <div class="row" style="background-color: #007cba;">
+                    <div style="margin-left:40px;margin-top:20px;margin-bottom:20px;">
+                    <div>
+                        <h2 style="color: white">{{self.title()}}</h2>
+                    </div>
+                    <div>
+                        <p style="color: white">{% block subtitle %}{% endblock %}</p>
+                    </div>
+                    </div>
+                </div>
+                <div style="margin-left:25px;margin-top:20px;margin-bottom:20px;">
+                    {% block content %}{% endblock %}        
+                </div>
+            </div>
+        </div>
+        <div class="colophon wigetized hidden-print">
+            <div class="container-boxed max">                
+            </div>
+        </div>
+    </div>
+  </body>
+</html>

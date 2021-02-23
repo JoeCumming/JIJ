@@ -1,8 +1,7 @@
 import requests
 import logging
-import tempfile
 import os 
-from bs4 import BeautifulSoup
+from typing import List
 from moviepy.editor import *
 
 from videoprops import get_video_properties, get_audio_properties
@@ -51,20 +50,15 @@ class CompositeVideoCreator(object):
     BASE_BITRATE = '347072'
     BASE_AUDIO_BITRATE = '71224'
 
-    def __init__(self, title_logo='./img/title_logo.png', answer_logo='./img/answer_logo.png') :
+    def __init__(self, appcontext, title_logo='./img/title_logo.png', answer_logo='./img/answer_logo.png') :
+        self.appcontext = appcontext
         self.title_logo = title_logo
         self.answer_logo = answer_logo
 
-    def createCompositeInteview(self, url:str, outpath:str=None, framerate=25, bitrate=None, audio_bitrate=None):
 
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-
-        name = self.getApplicantName(soup)
-        outfile = outpath if outpath != None else os.path.join(tempfile.gettempdir(), "{}_complete.mp4".format(name.replace(" ", "_")))
-
-        if not os.path.exists(outfile) :
-            answervideos = self.getApplicantVideos(soup, name)
+    def createCompositeInteview(self, name:str, url:str, outfile:str, answervideos:List[Answer], framerate=25, bitrate=None, audio_bitrate=None):
+            
+        if not os.path.exists(outfile) :            
             
             videoprops = self.getVideoProperties(answervideos[0].video)
             targetsize = answervideos[0].getSize()        
@@ -81,6 +75,7 @@ class CompositeVideoCreator(object):
             clips = opening_clip + answer_clips + closing_clip
             
             final_clip = concatenate_videoclips(clips)
+            self.appcontext.status("Writing concatenated video to {}".format(outfile))
             logging.info("Writing concatenated video to {}".format(outfile))
             final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate)
 
@@ -92,36 +87,6 @@ class CompositeVideoCreator(object):
                 .margin(right=8, top=8, opacity=0)
                 .set_position(("right","top"))
                 .fadein(0.5))
-
-    def getApplicantName(self, soup):
-        information = soup.find('div', {'id': 'vidcruiter-public-profile-applicant'})
-        return information.find('p', class_='name').text.strip()
-
-    def getApplicantVideos(self, soup, name: str):
-        applicant = name.replace(" ", "_")
-        tempdir = tempfile.gettempdir()
-        videos = []
-
-        qandasection = soup.find_all('div', class_='vidcruiter-public-profile-question-page-answer')
-        i = 0
-        for div in qandasection:
-            question_div = div.find('div', class_='question')
-            question = str.strip(question_div.find('div', class_='description').text)
-            answer_div = div.find('div', class_='answer')
-            answer_video = answer_div.find('source').attrs['src']      
-
-            video = os.path.join(tempdir, '{}_{}.mp4'.format(applicant, i))
-                    
-            if not os.path.exists(video):
-                with requests.get(answer_video, allow_redirects=True) as r:
-                    logging.info("Saving answer {} to {}".format(i, video))
-                    with open(video, 'wb') as local:
-                        local.write(r.content)
-
-            videos.append(Answer(question, video))    
-            i = i + 1
-
-        return videos
 
     def getVideoProperties(self, video: str):
         return get_video_properties(video)   

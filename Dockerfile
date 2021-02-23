@@ -1,7 +1,7 @@
 ## STILL IN THE TESTING STAGE
-#FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7 as base
+FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7 as base
 
-FROM python:3.7-alpine as base
+#FROM python:3.7-alpine as base
 
 RUN apk --update add \
     python3 python3-dev gcc \
@@ -29,7 +29,7 @@ ENV STATIC_URL /static
 ENV STATIC_PATH /var/www/app/static
 COPY ./requirements.txt /var/www/requirements.txt
 RUN pip install -r /var/www/requirements.txt --no-cache-dir
-RUN apk --purge del .build-deps
+#RUN apk --purge del .build-deps
 
 
 ################# DEBUG IMAGE      ##################

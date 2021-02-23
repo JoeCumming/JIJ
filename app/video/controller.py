@@ -1,33 +1,46 @@
 from flask import Blueprint, jsonify, abort, request, make_response, url_for, send_file, render_template, current_app, redirect
+from flask.config import Config
 from flask_socketio import SocketIO
 from concurrent.futures import ThreadPoolExecutor
-from os import listdir, remove
-from os.path import basename, join, isfile, getsize, getctime
-import time
-import logging
 
-from youtube_video_upload import upload_from_options
-import youtube_video_upload
+import os
+import logging
 
 #from app.auth import auth
 
-from lib.db import db
+from lib.video.creator import VideoCreator
 from lib.db.models import Video
+from lib.db import db
 
-from lib.video.compositor import CompositeVideoCreator
-from lib.video.options import VideoDescriptor, LoadDescriptor
-
-
-video = Blueprint('video', __name__, url_prefix="video", template_folder="templates")
-
-compositor = CompositeVideoCreator()
 executor = ThreadPoolExecutor(2)
 
+video = Blueprint('video', __name__, url_prefix="video")
+
+
+class AppContext(object) :
+
+    def __init__(self, context):
+        self.context = context
+        self.db = context.app.extensions['sqlalchemy'].db
+        self.socket = context.app.extensions['socketio']
+        self.config = context.app.config
+
+    def root_path(self):
+        return self.context.app.root_path
+
+    def push(self):
+        self.context.push()
+
+    def status(self, message: str) :
+        self.socket.emit('status', {'msg': message }, namespace = '/events')
+
+    def emit(self, id, data=None) :
+        self.socket.emit(id, data, namespace = '/events')
 
 @video.route('/')
 def index():
     try:             
-        return render_template("videos.html", videos=Video.query.all())
+        return render_template("video/videos.html", videos=Video.query.all())
     except Exception as e:
         return str(e), 500    
 
@@ -35,7 +48,10 @@ def index():
 @video.route('/request')
 #@auth.login_required
 def request_composite():
-    return render_template("video_request.html", categories = youtube_video_upload.get_category_number.IDS )
+    try:
+        return render_template("video/video_request.html")
+    except Exception as e:
+        return str(e), 500    
 
 
 @video.route('/download/<id>')
@@ -58,10 +74,15 @@ def delete(id):
         abort(400)
         
     try:        
-        remove(join(current_app.root_path, 'static', 'video', id))
+        record = Video.query.get(id)
+        if os.path.exists(record.composite_url):
+            os.remove(record.composite_url)
+        db.session.delete(record)
         return redirect(url_for('video.index'))
     except Exception as e:
         return str(e), 500
+    finally:
+        db.session.commit()
 
 
 @video.route('/compose', methods = ['POST'])
@@ -69,38 +90,29 @@ def delete(id):
 def compose():
     if not request.form or not 'candidate_url' in request.form :
         abort(400)
+    
+    try:          
 
-    if 'load' in request.form and request.form['load'] == 'on' and not 'title' in request.form :
-        abort(400, "The video needs a title to upload")
-            
-    try:    
-        
-        url = request.form['candidate_url']     
-        base = "{}.mp4".format(basename(url))
-        title = request.form['title'] if 'title' in request.form else base
-        privacy = 'unlisted'
-        category = 'Education'
+        context = AppContext(current_app.app_context())
+        video = Video(name="pending...", jij_url=request.form['candidate_url'])
+        context.db.session.add(video)
+        context.db.session.commit()
+        context.db.session.expunge(video)
 
-        #dbrecord = Video(jij_url=url)
-
-        outpath = join(current_app.root_path, 'static', 'video', base) 
-        loader = LoadDescriptor(current_app.config['SECRETS_FILE'], current_app.config['CREDENTIALS_FILE'], True)      
-        loader.add_video(VideoDescriptor(title, outpath, "This is a test", privacy, category))          
-        executor.submit(create_composite, url, loader, outpath, current_app.extensions['socketio'])
-                
+        creator = VideoCreator(context, video)  
+        executor.submit(create_composite, creator)              
         return redirect(url_for('video.index'))
     except Exception as e:
         return str(e), 500
 
 
-
-def create_composite(url, loader: LoadDescriptor, outpath: str, socket: SocketIO):  
-    try:        
-        compositor.createCompositeInteview(url, outpath)          
-        socket.emit('status', {'msg':'Composite video is complete. Loading to YouTube...'}, namespace = '/events')
-
-        link = upload_from_options(loader.asDictionary())
-        socket.emit('status', {'msg':'YouTube load is complete'}, namespace = '/events')
+def create_composite(creator: VideoCreator):  
+    try:                                      
+        creator.appcontext.status("Sending request for video composite")
+        creator.createAndUpload()        
+        creator.appcontext.status('Finished')
     except Exception as e:
         logging.exception(e)
-
+        creator.appcontext.status('Error')
+    finally:
+        creator.appcontext.emit('Complete')

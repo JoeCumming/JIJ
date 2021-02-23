@@ -5,9 +5,9 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True        
-    SECRETS_FILE = os.environ.get('SECRETS_FILE', '/usr/src/instance/client_secrets.json')
-    CREDENTIALS_FILE = os.environ.get('CREDENTIALS_FILE', '/usr/src/instance/credentials.json')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:////usr/src/app.db')
+    SECRETS_FILE = os.environ.get('SECRETS_FILE', './instance/client_secrets.json')
+    CREDENTIALS_FILE = os.environ.get('CREDENTIALS_FILE', './instance/credentials.json')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class DevConfig(Config):

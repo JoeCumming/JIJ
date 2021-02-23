@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %} Video Services {% endblock %}
+{% block head %}
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.0/socket.io.dev.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket;
+      $(document).ready(function() {
+          socket = io.connect('http://' + document.domain + ':' + location.port + '/events');          
+          socket.on('status', function(data) {
+              $('#status').html(data.msg);              
+          });
+          socket.on('complete', function(data) {
+              location.reload();            
+          });          
+          socket.on('update', function(data) {
+              location.reload();            
+          });     
+      });
+  </script>
+
+{% endblock %}
+
+{% block content %}
+    
+    <h2>Available Videos</h2>        
+    <form action="/video/compose" method="post">           
+      <table>
+        <tr>
+          <th></th>          
+          <th></th>          
+          <th></th>          
+          <th></th>       
+          <th></th>   
+          <th></th>   
+          <th></th>
+        </tr>
+      {% for video in videos %}
+        <tr>
+          <td>
+          {% if not video.uploaded %} 
+            <img style="height:16px" src="{{ url_for('static', filename = 'spinner.gif')}}"/> 
+          {% endif %}
+          </td>
+          <td> {{ video.name }} </td>          
+          <td> <a href="{{ video.youtube_url }}">{{ video.youtube_url }}</a></td>          
+          <td> 
+              <a href="{{ video.jij_url }}"><img alt="Profile" title="Profile" src="{{ url_for('static', filename = 'person.png')}}"/> </a> 
+          </td>          
+          <td> 
+            {% if video.created %} 
+              <a href="{{ url_for('static', filename = 'video/' + video.composite_name) }}"><img alt="Profile" title="Profile" src="{{ url_for('static', filename = 'down.png')}}"/> </a> 
+            {% endif %}
+          </td>          
+          <td>                           
+               <a href="/video/delete/{{video.id}}"><img alt="Remove" title="Remove" src="{{ url_for('static', filename = 'delete.png')}}"/> </a>
+          </td>
+          <td></td>
+        </tr>
+      {% endfor %}
+      </table>      
+    </form>
+  
+    <div id="status" class="background-color:silver"></div>
+
+    <p>To request a new video be created click <a href="/video/request">here</a></p>    
+    
+{% endblock %}
