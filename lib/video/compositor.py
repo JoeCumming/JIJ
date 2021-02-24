@@ -50,8 +50,7 @@ class CompositeVideoCreator(object):
     BASE_BITRATE = '347072'
     BASE_AUDIO_BITRATE = '71224'
 
-    def __init__(self, appcontext, title_logo='./img/title_logo.png', answer_logo='./img/answer_logo.png') :
-        self.appcontext = appcontext
+    def __init__(self, title_logo='/app/img/title_logo.png', answer_logo='/app/img/answer_logo.png') :        
         self.title_logo = title_logo
         self.answer_logo = answer_logo
 
@@ -74,8 +73,7 @@ class CompositeVideoCreator(object):
             closing_clip = [self.createClosingClip(targetsize, titlefontsize, self.getClosingLogoClip(50 * fontscale))]
             clips = opening_clip + answer_clips + closing_clip
             
-            final_clip = concatenate_videoclips(clips)
-            self.appcontext.status("Writing concatenated video to {}".format(outfile))
+            final_clip = concatenate_videoclips(clips)            
             logging.info("Writing concatenated video to {}".format(outfile))
             final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate)
 

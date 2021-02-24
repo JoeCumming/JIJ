@@ -11,8 +11,10 @@ class Video(db.Model):
     composite_name = db.Column(db.String())
     composite_url  = db.Column(db.String())
     youtube_url    = db.Column(db.String())
+    status         = db.Column(db.String())
     created        = db.Column(db.Boolean())
     uploaded       = db.Column(db.Boolean())
+    error          = db.Column(db.Boolean())
 
     def __init__(self, name="", title="", description="", jij_url="", composite_name="", composite_url="", youtube_url="",
                 created = False, uploaded = False):
@@ -25,6 +27,8 @@ class Video(db.Model):
         self.youtube_url    = youtube_url
         self.created        = created
         self.uploaded       = uploaded
+        self.error          = False
+        self.status         = ""
 
 
     def __repr__(self):

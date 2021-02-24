@@ -7,7 +7,7 @@ python-engineio==3.13.2
 beautifulsoup4==4.9.3
 moviepy==2.0.0.dev2
 requests==2.25.1
-#psycopg2-binary
+gevent-websocket==0.10.1
 flask-httpauth==4.2.0
 get-video-properties==0.1.1
 youtube_video_upload==0.2.0

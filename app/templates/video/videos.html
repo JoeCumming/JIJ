@@ -3,11 +3,15 @@
 {% block head %}
 
 <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.0/socket.io.dev.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.0/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
-      var socket;
-      $(document).ready(function() {
-          socket = io.connect('http://' + document.domain + ':' + location.port + '/events');          
+      var socket;      
+
+      $(document).ready(function() {          
+          socket = io.connect('http://' + document.domain + ':' + location.port + '/events');                    
+          socket.on('info', function(data) {
+              $("#" + data.id).html(data.msg);                           
+          });
           socket.on('status', function(data) {
               $('#status').html(data.msg);              
           });
@@ -24,6 +28,14 @@
 
 {% block content %}
     
+    <p>To create a composite video enter the url of the candidate</p>        
+    <form action="/video/compose" method="post">
+      <div style="width:75%">      
+          <input type="text" id="candidate_url" name="candidate_url" style="width:65%"></input>
+          <input type="submit" value="Submit">        
+      </div>            
+    </form>
+
     <h2>Available Videos</h2>        
     <form action="/video/compose" method="post">           
       <table>
@@ -37,13 +49,15 @@
           <th></th>
         </tr>
       {% for video in videos %}
-        <tr>
-          <td>
-          {% if not video.uploaded %} 
+        <tr {% if video.error %}class="error"{% endif %}>
+          <td>            
+          {% if video.error %}    
+            <img style="height:16px" src="{{ url_for('static', filename = 'boom.png') }}"/> 
+          {% elif not video.uploaded %} 
             <img style="height:16px" src="{{ url_for('static', filename = 'spinner.gif')}}"/> 
           {% endif %}
           </td>
-          <td> {{ video.name }} </td>          
+          <td id="name{{video.id}}"> {{ video.name }} </td>          
           <td> <a href="{{ video.youtube_url }}">{{ video.youtube_url }}</a></td>          
           <td> 
               <a href="{{ video.jij_url }}"><img alt="Profile" title="Profile" src="{{ url_for('static', filename = 'person.png')}}"/> </a> 
@@ -56,7 +70,7 @@
           <td>                           
                <a href="/video/delete/{{video.id}}"><img alt="Remove" title="Remove" src="{{ url_for('static', filename = 'delete.png')}}"/> </a>
           </td>
-          <td></td>
+          <td id="{{video.id}}">{{ video.status or '' }}</td>
         </tr>
       {% endfor %}
       </table>      
@@ -64,6 +78,5 @@
   
     <div id="status" class="background-color:silver"></div>
 
-    <p>To request a new video be created click <a href="/video/request">here</a></p>    
     
 {% endblock %}

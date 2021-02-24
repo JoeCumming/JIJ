@@ -34,6 +34,9 @@ class AppContext(object) :
     def status(self, message: str) :
         self.socket.emit('status', {'msg': message }, namespace = '/events')
 
+    def info(self, id: int, message: str) :
+        self.socket.emit('info', {'id': id, 'msg': message }, namespace = '/events')
+
     def emit(self, id, data=None) :
         self.socket.emit(id, data, namespace = '/events')
 
@@ -96,10 +99,10 @@ def compose():
         context = AppContext(current_app.app_context())
         video = Video(name="pending...", jij_url=request.form['candidate_url'])
         context.db.session.add(video)
-        context.db.session.commit()
+        context.db.session.commit()        
+        creator = VideoCreator(context, video.id, video)  
         context.db.session.expunge(video)
 
-        creator = VideoCreator(context, video)  
         executor.submit(create_composite, creator)              
         return redirect(url_for('video.index'))
     except Exception as e:
@@ -107,12 +110,13 @@ def compose():
 
 
 def create_composite(creator: VideoCreator):  
-    try:                                      
-        creator.appcontext.status("Sending request for video composite")
+    try:                                              
         creator.createAndUpload()        
         creator.appcontext.status('Finished')
     except Exception as e:
         logging.exception(e)
-        creator.appcontext.status('Error')
-    finally:
-        creator.appcontext.emit('Complete')
+        creator.video.error = True
+        creator.video.status = 'Error : ' + str(e)
+        creator.appcontext.db.session.commit()  
+    finally:        
+        creator.appcontext.emit('complete')
