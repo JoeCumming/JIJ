@@ -1,4 +1,4 @@
-import json
+import os
 
 class VideoDescriptor(object) :
     
@@ -16,7 +16,7 @@ class LoadDescriptor(object) :
 
     def __init__(self, secrets_path:str, credentials_path:str, local_server:bool = False ) :
         self.local_server = local_server
-        self.secrets_path = secrets_path
+        self.secrets_path = secrets_path        
         self.credentials_path = credentials_path
         self.videos = []
 
