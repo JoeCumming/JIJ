@@ -5,17 +5,13 @@ from lib.video.creator import VideoCreator
 from lib.db.models import Video
 import logging
 
+from proglog import ProgressBarLogger
 
-##Not sure I should be doing this ... ?
-##Session is for the app?
-#class DBSessionTask(celery.Task):
-#    abstract = True
-#    def after_return(self, status, retval, task_id, args, kwargs, einfo):
-#        db.session.remove()
+class StatusUpdater(ProgressBarLogger):
 
-class StatusUpdater():
-
-    def __init__(self, message_queue):
+    def __init__(self, id, message_queue):
+        super().__init__()
+        self.id = id
         self.socketio = SocketIO(message_queue=message_queue)
 
     def info(self, id, message):
@@ -27,23 +23,28 @@ class StatusUpdater():
     def complete(self):
         self.socketio.emit('complete')
 
+    def callback(self, **changes):
+        for (parameter, new_value) in changes.items():
+            self.info(self.id, new_value)
+
 
 @celery.task
 def create_video(videoid: int, rootpath: str):    
-
-    updater = StatusUpdater(Config.CELERY_BROKER_URL)
-    try:              
+    
+    try:    
         video = Video.query.get(videoid)        
-        creator = VideoCreator(video, rootpath, db.session, updater)                    
-        creator.createAndUpload()                
-        
-    except Exception as e:
-        logging.exception(e)
-        #creator.video.error = True
-        #creator.video.status = 'Error : ' + str(e)
-        #creator.appcontext.db.session.commit()  
-        updater.complete()
+        updater = StatusUpdater(video.id, Config.CELERY_BROKER_URL)
+
+        try:                      
+            VideoCreator(video, rootpath, db.session, updater).createAndUpload()        
+        except Exception as e:
+            logging.exception(e)
+            video.error = True
+            video.status = 'Error : ' + str(e)        
+            db.session.commit()
+            updater.complete()
     finally:
+        db.session.commit()
         updater.update()
         
     

@@ -30,12 +30,12 @@ services:
         DOMAIN: ${DOMAIN}
         EMAIL: ${EMAIL}
         FLASK: app
+        FLASK_PORT: ${FLASK_PORT}
     ports:
       - 80:80
       - 443:443
     volumes:
-      #- /etc/letsencrypt:/etc/letsencrypt
-      - /home/joe:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt      
     depends_on:
       - app
     env_file: 
@@ -44,7 +44,7 @@ services:
   app:
     <<: *default-app    
     working_dir: /app        
-    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --bind 0.0.0.0:5000 --workers 1 --threads 4 --timeout 60 ${FLASK_APP}
+    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --bind 0.0.0.0:${FLASK_PORT} --workers 1 --threads 4 --timeout 60 ${FLASK_APP}
   
   worker:
     <<: *default-env

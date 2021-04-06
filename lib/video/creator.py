@@ -25,7 +25,6 @@ class VideoCreator(object):
         self.rootpath = rootpath  
         self.updater = updater      
                 
-
     def info(self, message: str, tag:str =""):        
         self.updater.info(self.id, message)                    
 
@@ -55,7 +54,6 @@ class VideoCreator(object):
         self.session.commit()                
         
         self.updater.complete()          
-
         return youtube_url
 
 
@@ -69,8 +67,7 @@ class VideoCreator(object):
 
         name = self.getApplicantName(soup)
         self.video.name = name        
-        self.session.commit()        
-        #self.info(name, "name")
+        self.session.commit()                
         self.update()
 
         answervideos = self.getApplicantVideos(soup, name)                
@@ -87,7 +84,7 @@ class VideoCreator(object):
 
         self.info(self.video.status)        
         
-        self.compositor.createCompositeInteview(name, source_url, videofilepath, answervideos)          
+        self.compositor.createCompositeInteview(name, source_url, videofilepath, answervideos, logger=self.updater)          
         self.video.created = True
         self.video.status = "Concatenated video complete"        
         self.session.commit()        

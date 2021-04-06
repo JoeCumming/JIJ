@@ -15,10 +15,12 @@ COPY ./conf.d/flask_app.conf /etc/nginx/conf.d/
 # ex: $host needs to be set as ${DOLLAR}host
 ARG DOMAIN
 ARG FLASK
+ARG FLASK_PORT
 ARG EMAIL
 
 ENV DOMAIN=$DOMAIN
 ENV FLASK=$FLASK
+ARG FLASK_PORT=$FLASK_PORT
 ENV EMAIL=$EMAIL
 ENV DOLLAR='$'
 

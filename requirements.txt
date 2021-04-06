@@ -10,6 +10,7 @@ requests==2.25.1
 flask-httpauth==4.2.0
 get-video-properties==0.1.1
 youtube_video_upload==0.2.0
+proglog==0.1.9
 
 #gunicorn & sockets
 gunicorn==20.1.0
