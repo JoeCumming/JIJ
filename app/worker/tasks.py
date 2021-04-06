@@ -9,13 +9,18 @@ from proglog import ProgressBarLogger
 
 class StatusUpdater(ProgressBarLogger):
 
-    def __init__(self, id, message_queue):
+    def __init__(self, video, session, message_queue):
         super().__init__()
-        self.id = id
+        self.video = video
+        self.session = session
         self.socketio = SocketIO(message_queue=message_queue)
 
-    def info(self, id, message):
-        self.socketio.emit('info', {'id': id, 'msg': message }, namespace = '/events')
+    def info(self, message):
+        try:
+            self.video.status = new_value        
+            self.socketio.emit('info', {'id': self.video.id, 'msg': message }, namespace = '/events')
+        finally:
+            self.session.commit()
 
     def update(self):
         self.socketio.emit('update', namespace = '/events')
@@ -25,18 +30,18 @@ class StatusUpdater(ProgressBarLogger):
 
     def callback(self, **changes):
         for (parameter, new_value) in changes.items():
-            self.info(self.id, new_value)
+            self.info(new_value)
 
 
 @celery.task
-def create_video(videoid: int, rootpath: str):    
+def create_video(id: int, rootpath: str):    
     
     try:    
-        video = Video.query.get(videoid)        
-        updater = StatusUpdater(video.id, Config.CELERY_BROKER_URL)
+        video = Video.query.get(id)        
+        updater = StatusUpdater(video, db.session, Config.CELERY_BROKER_URL)
 
         try:                      
-            VideoCreator(video, rootpath, db.session, updater).createAndUpload()        
+            VideoCreator(video, rootpath, updater).createAndUpload()        
         except Exception as e:
             logging.exception(e)
             video.error = True

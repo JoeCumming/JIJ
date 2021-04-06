@@ -17,16 +17,14 @@ class VideoCreator(object):
     PRIVACY = 'unlisted'
     CATEGORY = 'Education'
 
-    def __init__(self, video:Video, rootpath: str, session, updater):
+    def __init__(self, video:Video, rootpath: str, updater):
         self.compositor = CompositeVideoCreator()                        
-        self.session = session
-        self.video = video
-        self.id = self.video.id     
+        self.video = video        
         self.rootpath = rootpath  
         self.updater = updater      
                 
     def info(self, message: str, tag:str =""):        
-        self.updater.info(self.id, message)                    
+        self.updater.info(message)                    
 
     def update(self):        
         self.updater.update()                    
@@ -44,16 +42,15 @@ class VideoCreator(object):
         #loader = LoadDescriptor(secrets_file, credentials_file, True)  
         #loader.add_video(VideoDescriptor(self.video.title, self.video.composite_url, self.video.title, VideoCreator.PRIVACY, VideoCreator.CATEGORY))
                 
-        self.video.status = "Loading to YouTube ..."
-        self.session.commit() 
+        #self.info("Loading to YouTube ...")        
 
         youtube_url = "" #upload_from_options(loader.asDictionary())
         self.video.youtube_url = youtube_url
         self.video.uploaded = True
-        self.video.status = ""
-        self.session.commit()                
+        self.info("")
         
-        self.updater.complete()          
+        self.updater.complete()      
+           
         return youtube_url
 
 
@@ -67,28 +64,21 @@ class VideoCreator(object):
 
         name = self.getApplicantName(soup)
         self.video.name = name        
-        self.session.commit()                
         self.update()
 
         answervideos = self.getApplicantVideos(soup, name)                
         videofilename = name.replace(" ", "") + ".mp4"
         videofilepath = os.path.join(self.rootpath, 'static', 'video', videofilename) 
                 
-
         self.video.title = name + " Video Interview"
         self.video.description = "JobsInJapan.com First Round Inteview"          
         self.video.composite_name = videofilename
-        self.video.composite_url = videofilepath        
-        self.video.status = "Writing concatenated video ..."
-        self.session.commit()        
-
-        self.info(self.video.status)        
+        self.video.composite_url = videofilepath                
+        self.info("Writing concatenated video ...")        
         
         self.compositor.createCompositeInteview(name, source_url, videofilepath, answervideos, logger=self.updater)          
         self.video.created = True
-        self.video.status = "Concatenated video complete"        
-        self.session.commit()        
-        self.info(self.video.status)      
+        self.info("Concatenated video complete")                
         
     
     def getApplicantName(self, soup):
