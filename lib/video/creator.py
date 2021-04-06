@@ -26,12 +26,10 @@ class VideoCreator(object):
     def info(self, message: str, tag:str =""):        
         self.updater.info(message)                    
 
-    def update(self):        
-        self.updater.update()                    
+    def updatename(self, name):        
+        self.updater.updatename(name)                    
 
     def createAndUpload(self):        
-
-        self.update()
 
         self.info('Creating composite video...')
         self.create()
@@ -64,7 +62,7 @@ class VideoCreator(object):
 
         name = self.getApplicantName(soup)
         self.video.name = name        
-        self.update()
+        self.updatename(name)
 
         answervideos = self.getApplicantVideos(soup, name)                
         videofilename = name.replace(" ", "") + ".mp4"

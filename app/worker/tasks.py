@@ -22,6 +22,9 @@ class StatusUpdater(ProgressBarLogger):
         finally:
             self.session.commit()
 
+    def updatename(self, name):
+        self.socketio.emit('name', {'id': self.video.id, 'msg': name }, namespace = '/events')
+
     def update(self):
         self.socketio.emit('update', namespace = '/events')
 

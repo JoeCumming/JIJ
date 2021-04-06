@@ -12,6 +12,9 @@
           socket.on('info', function(data) {
               $("#" + data.id).html(data.msg);                           
           });
+          socket.on('name', function(data) {
+              $("#name" + data.id).html(data.msg);                           
+          });
           socket.on('status', function(data) {
               $('#status').html(data.msg);              
           });
