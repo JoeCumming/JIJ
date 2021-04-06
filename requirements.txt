@@ -1,5 +1,5 @@
 Flask==1.1.2
-Flask-SQLAlchemy===2.4.1 
+Flask-SQLAlchemy===2.5.1 
 Flask-Migrate==2.5.2
 Flask-Script==2.0.6
 Flask-Socketio==4.3.2
@@ -7,7 +7,18 @@ python-engineio==3.13.2
 beautifulsoup4==4.9.3
 moviepy==2.0.0.dev2
 requests==2.25.1
-gevent-websocket==0.10.1
 flask-httpauth==4.2.0
 get-video-properties==0.1.1
 youtube_video_upload==0.2.0
+
+#gunicorn & sockets
+gunicorn==20.1.0
+gevent==21.1.2
+gevent-websocket==0.10.1
+
+# Data and workers.
+redis==3.5.3
+celery==5.0.5
+
+# Debugger
+# ptvsd==4.3.2

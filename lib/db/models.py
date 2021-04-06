@@ -1,4 +1,5 @@
-from lib.db import db
+from app import db
+
 
 class Video(db.Model):
     __tablename__ = 'video'
