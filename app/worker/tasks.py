@@ -17,7 +17,7 @@ class StatusUpdater(ProgressBarLogger):
 
     def info(self, message):
         try:
-            self.video.status = new_value        
+            self.video.status = message        
             self.socketio.emit('info', {'id': self.video.id, 'msg': message }, namespace = '/events')
         finally:
             self.session.commit()
