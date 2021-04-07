@@ -5,19 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.worker import FlaskCelery
 from config import config, Config
-
-#from sqlalchemy import create_engine
-#from sqlalchemy.orm import sessionmaker
-
-#engine = create_engine(app.config.get('SQLALCHEMY_DATABASE_URI'))
-#dbsession = scoped_session(sessionmaker(bind=engine))
-
-
-from lib.db import db
+from lib.db import db, login
 
 socketio = SocketIO()
 celery = FlaskCelery(__name__, broker=Config.CELERY_BROKER_URL)
 
+def create_db():
+    db.create_all()
 
 def create_app(config_name): 
 
@@ -25,6 +19,9 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
 
     db.init_app(app)
+    login.init_app(app)    
+    login.login_view = 'auth.login'
+
     socketio.init_app(app, host='0.0.0.0', message_queue=Config.CELERY_BROKER_URL)
     celery.conf.update(app.config)
 
@@ -34,5 +31,11 @@ def create_app(config_name):
     from app.video.controller import video
     app.register_blueprint(video, url_prefix='/video')
 
+    from app.auth.controller import auth
+    app.register_blueprint(auth, url_prefix='/auth')
+
+    app.before_first_request(create_db)   
+
     return app
+
 

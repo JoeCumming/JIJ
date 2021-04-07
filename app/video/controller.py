@@ -1,25 +1,22 @@
 from flask import Blueprint, jsonify, abort, request, make_response, url_for, send_file, render_template, current_app, redirect
+from flask_login import login_required
 from flask.config import Config
 from flask_socketio import SocketIO
-#from concurrent.futures import ThreadPoolExecutor
-
-import os
-import logging
-
-
-#from app.auth import auth
 
 from lib.db import db
 from lib.db.models import Video
 from lib.video.creator import VideoCreator
 from app.worker.tasks import create_video
 
-#executor = ThreadPoolExecutor(2)
 
-video = Blueprint('video', __name__, url_prefix="video")
+import os
+import logging
+
+video = Blueprint('video', __name__)
 
 
 @video.route('/')
+@login_required
 def index():
     try:             
         return render_template("video/videos.html", videos=Video.query.all())
@@ -28,7 +25,7 @@ def index():
 
 
 @video.route('/request')
-#@auth.login_required
+@login_required
 def request_composite():
     try:
         return render_template("video/video_request.html")
@@ -37,7 +34,7 @@ def request_composite():
 
 
 @video.route('/download/<id>')
-#@auth.login_required
+@login_required
 def download(id):
     if not id:
         abort(400)
@@ -50,7 +47,7 @@ def download(id):
 
 
 @video.route('/delete/<id>')
-#@auth.login_required
+@login_required
 def delete(id):
     if not id:
         abort(400)
@@ -68,7 +65,7 @@ def delete(id):
 
 
 @video.route('/compose', methods = ['POST'])
-#@auth.login_required
+@login_required
 def compose():
     if not request.form or not 'candidate_url' in request.form :
         abort(400)
@@ -85,16 +82,3 @@ def compose():
     finally:
         db.session.commit()
 
-
-#def create_composite(creator: VideoCreator):  
-#    try:                                              
-#        creator.createAndUpload()        
-#        #creator.appcontext.status('Finished')
-#    except Exception as e:
-#        logging.exception(e)
-#        creator.video.error = True
-#        creator.video.status = 'Error : ' + str(e)
-#        #creator.appcontext.db.session.commit()  
-#    finally:        
-#        #creator.appcontext.emit('complete')
-#        pass

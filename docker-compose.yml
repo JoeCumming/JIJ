@@ -43,7 +43,9 @@ services:
 
   app:
     <<: *default-app    
-    working_dir: /app        
+    working_dir: /app   
+    ports:
+      - 5000:5000     
     command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --bind 0.0.0.0:${FLASK_PORT} --workers 1 --threads 4 --timeout 60 ${FLASK_APP}
   
   worker:
@@ -54,8 +56,7 @@ services:
       - .:/app          
     command: celery -A run_worker.celery worker --loglevel=info --concurrency ${CELERY_CONCURRENCY}
     depends_on:
-      - "redis"
-    
+      - "redis"    
 
 volumes:
   redis: {}    

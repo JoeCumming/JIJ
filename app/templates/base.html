@@ -20,7 +20,14 @@
                         <img class="noo-logo-img noo-logo-normal" src="{{ url_for('static', filename = 'logo2.png')}}" alt="">
                     </a>                                        
                     <nav class="collapse navbar-collapse noo-navbar-collapse">
-                        <ul id="menu-candidate-menu" class="navbar-nav sf-menu sf-js-enabled sf-arrows"><li id="menu-item-15143" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15143 align-right"><a href="/video">Video Services</a></li>                                        
+                        <ul id="menu-candidate-menu" class="navbar-nav sf-menu sf-js-enabled sf-arrows">
+                            <li id="menu-item-15143" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15143 align-right"><a href="{{ url_for('video.index') }}">Video Services</a></li>                            
+                            {% if current_user.is_authenticated %}
+                            <li id="menu-item-15145" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15145 align-right">
+                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">Logout</a>
+                            </li>
+                            {% endif %}
+                        </ul>
                     </nav> 
                     </div>
                 </div>                
