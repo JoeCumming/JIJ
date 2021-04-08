@@ -5,6 +5,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True        
+    CORS_HEADERS = 'Content-Type'
     SECRET_KEY = 'dummy_secret_key'
     SECRETS_FILE = os.environ.get('SECRETS_FILE', './instance/client_secrets.json')
     CREDENTIALS_FILE = os.environ.get('CREDENTIALS_FILE', './instance/credentials.json')

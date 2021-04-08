@@ -25,3 +25,10 @@ input {
     grid-column: 1;    
 }
 
+
+@media (max-width: 992px) {
+    .navbar-toggle {
+        display: flex;
+        align-items:center;
+    }
+}
