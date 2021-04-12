@@ -1,23 +1,62 @@
 version: '3.4'
 
+x-env: &default-env
+  env_file:
+      - ".env"
+  restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+  stop_grace_period: "3s"
+
+x-app: &default-app
+  <<: *default-env
+  depends_on:
+    - "redis"
+  build:
+    context: "."
+    dockerfile: Dockerfile      
+  volumes:
+    - .:/app
+
 services:
-  app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      #target: debug
-    ports:
-      - "5000:5000"
-      - "8080:8080"
-      - "80:80"
+  redis:
+    <<: *default-env
+    image: "redis:6.0.10-buster"    
     volumes:
-      - .:/app
-    environment:
-      FLASK_APP: /app/app.py
-      SECRETS_FILE: /app/instance/client_secrets.json
-      CREDENTIALS_FILE: /app/instance/credentials.json
-      DATABASE_URL: sqlite:////app/app.db      
-      #FLASK_ENV: development
-    command: flask run --host 0.0.0.0 --port=5000 
-    
-    
+      - "redis:/data"      
+
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        DOMAIN: ${DOMAIN}
+        EMAIL: ${EMAIL}
+        FLASK: app
+        FLASK_PORT: ${FLASK_PORT}
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt      
+    depends_on:
+      - app
+    env_file: 
+      - ".env"
+
+  app:
+    <<: *default-app    
+    working_dir: /app   
+    ports:
+      - 5000:5000        
+    command: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --bind 0.0.0.0:${FLASK_PORT} --workers 1 --threads 4 --timeout 60 ${FLASK_APP}
+  
+  worker:
+    <<: *default-env
+    build: .
+    working_dir: /app
+    volumes:
+      - .:/app          
+    command: celery -A run_worker.celery worker --loglevel=info --concurrency ${CELERY_CONCURRENCY}
+    depends_on:
+      - "redis"    
+
+volumes:
+  redis: {}    

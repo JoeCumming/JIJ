@@ -1,4 +1,8 @@
-from lib.db import db
+from lib.db import db, login
+
+from flask_login import UserMixin, LoginManager
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class Video(db.Model):
     __tablename__ = 'video'
@@ -33,4 +37,22 @@ class Video(db.Model):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
-        
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+ 
+    id       = db.Column(db.Integer, primary_key=True)
+    email    = db.Column(db.String(), unique=True)
+    name     = db.Column(db.String())
+    password = db.Column(db.String())
+ 
+    def set_password(self,password):
+        self.password = generate_password_hash(password)
+     
+    def check_password(self,password):
+        return check_password_hash(self.password,password)        
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

@@ -1,5 +1,3 @@
-#FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7 as base
-
 FROM python:3.7-alpine as base
 
 RUN apk --update add \
@@ -28,13 +26,3 @@ RUN pip install -r /var/www/requirements.txt --no-cache-dir
 EXPOSE 80
 
 
-################# DEBUG IMAGE      ##################
-#FROM base as debug
-#RUN pip install ptvsd
-#WORKDIR /usr/src/
-
-#RUN python manage.py db init && \
-#    python manage.py db migrate && \
-#    python manage.py db upgrade 
-
-#CMD python -m ptvsd --host 0.0.0.0 -port 5678 --wait --multiprocess -m flask run --host=0.0.0.0 -p 5000

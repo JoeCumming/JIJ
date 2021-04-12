@@ -55,7 +55,7 @@ class CompositeVideoCreator(object):
         self.answer_logo = answer_logo
 
 
-    def createCompositeInteview(self, name:str, url:str, outfile:str, answervideos:List[Answer], framerate=25, bitrate=None, audio_bitrate=None):
+    def createCompositeInteview(self, name:str, url:str, outfile:str, answervideos:List[Answer], framerate=25, bitrate=None, audio_bitrate=None, logger=None):
             
         if not os.path.exists(outfile) :            
             
@@ -75,7 +75,7 @@ class CompositeVideoCreator(object):
             
             final_clip = concatenate_videoclips(clips)            
             logging.info("Writing concatenated video to {}".format(outfile))
-            final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate)
+            final_clip.write_videofile(outfile, fps=framerate, bitrate=bitrate, audio_bitrate=audio_bitrate, logger=logger)
 
         return outfile
         

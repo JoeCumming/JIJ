@@ -1,11 +1,16 @@
 <html lang="en-us">
-  <head>
+  <head>    
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <link rel="icon" href="data:,">    
-    <link rel="stylesheet" href="https://jobsinjapan.com/wpdata/wp-content/uploads/noo_jobmonster/custom.css?ver=1.0.72">
-    <link rel="stylesheet" href="https://jobsinjapan.com/wpdata/wp-content/themes/noo-jobmonster/assets/css/noo.css?ver=1.0.72">    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">    
+    <link rel="icon" href="{{ url_for('static', filename = 'favicon-16x16.png')}}">  
+    <link rel="stylesheet" href="https://jobsinjapan.com/wpdata/wp-content/themes/noo-jobmonster/assets/css/noo.css?ver=1.0.72">                   
+    <link rel="stylesheet" id="noo-custom-style-css" href="https://jobsinjapan.com/wpdata/wp-content/uploads/noo_jobmonster/custom.css?ver=1.0.84" type="text/css" media="all">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">  
+    <script type="text/javascript" src="https://jobsinjapan.com/wpdata/wp-includes/js/jquery/jquery.min.js?ver=3.5.1" id="jquery-core-js"></script>  
+    <script type="text/javascript" src="https://jobsinjapan.com/wpdata/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2" id="jquery-migrate-js"></script>
+    <script type="text/javascript" src="https://jobsinjapan.com/wpdata/wp-content/themes/noo-jobmonster/assets/js/noo.js?ver=1.0.84"></script>    
+    <script type="text/javascript" src="https://jobsinjapan.com/wpdata/wp-content/themes/noo-jobmonster/framework/vendor/bootstrap.min.js?ver=1.0.84"></script>
     <title>{% block title %}{% endblock %}</title>
     {% block head %}{% endblock %}   
   </head>
@@ -16,11 +21,23 @@
             <div class="navbar-wrapper" style="min-height: 80px;">
                 <div class="navbar navbar-default fixed-top shrinkable" role="navigation">
                     <div class="container-boxed max">
+                    <a class="navbar-toggle collapsed" data-toggle="collapse" data-target=".noo-navbar-collapse">
+                        <span class="sr-only">Navigation</span>
+                        <i class="fas fa-bars"></i>
+                    </a> 
                     <a href="/" class="navbar-brand" title="JIJ Services">
                         <img class="noo-logo-img noo-logo-normal" src="{{ url_for('static', filename = 'logo2.png')}}" alt="">
-                    </a>                                        
+                        <img class="noo-logo-mobile-img noo-logo-normal" src="{{ url_for('static', filename = 'logo3.png')}}" alt="">
+                    </a>                                                           
                     <nav class="collapse navbar-collapse noo-navbar-collapse">
-                        <ul id="menu-candidate-menu" class="navbar-nav sf-menu sf-js-enabled sf-arrows"><li id="menu-item-15143" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15143 align-right"><a href="/video">Video Services</a></li>                                        
+                        <ul id="menu-candidate-menu" class="navbar-nav sf-menu sf-js-enabled sf-arrows">
+                            <li id="menu-item-15143" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15143 align-right"><a href="{{ url_for('video.index') }}">Video Services</a></li>                                                        
+                            {% if current_user.is_authenticated %}
+                            <li id="menu-item-15144" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15145 align-right">
+                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">Logout</a>
+                            </li>
+                            {% endif %}
+                        </ul>
                     </nav> 
                     </div>
                 </div>                

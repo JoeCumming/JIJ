@@ -12,3 +12,23 @@ tr.error td {
     color: white;
     background-color: darkred;
 }
+
+form {
+    display: grid;
+    grid-template-columns: auto;
+
+    width: 30%;
+    gap: 0.5em;
+}
+  
+input {    
+    grid-column: 1;    
+}
+
+
+@media (max-width: 992px) {
+    .navbar-toggle {
+        display: flex;
+        align-items:center;
+    }
+}
