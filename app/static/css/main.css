@@ -3,7 +3,7 @@ table {
     border-top: black solid 1px;
 }
 
-td {
+th, td {
     border-bottom: black solid 1px;
     padding: 5px;
 }
@@ -11,6 +11,10 @@ td {
 tr.error td {
     color: white;
     background-color: darkred;
+}
+
+th[data-sort]{
+    cursor:pointer;
 }
 
 form {

@@ -19,6 +19,7 @@ class Video(db.Model):
     created        = db.Column(db.Boolean())
     uploaded       = db.Column(db.Boolean())
     error          = db.Column(db.Boolean())
+    timecreated    = db.Column(db.String())
 
     def __init__(self, name="", title="", description="", jij_url="", composite_name="", composite_url="", youtube_url="",
                 created = False, uploaded = False):
@@ -32,11 +33,13 @@ class Video(db.Model):
         self.created        = created
         self.uploaded       = uploaded
         self.error          = False
+        self.timecreated    = None
         self.status         = ""
 
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

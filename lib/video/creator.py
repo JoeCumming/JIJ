@@ -4,6 +4,7 @@ import os
 import requests
 import re
 import tempfile
+from datetime import datetime
 from bs4 import BeautifulSoup
 from youtube_video_upload import upload_from_options
 
@@ -76,6 +77,7 @@ class VideoCreator(object):
         
         self.compositor.createCompositeInteview(name, source_url, videofilepath, answervideos, logger=self.updater)          
         self.video.created = True
+        self.video.timecreated = datetime.utcnow().isoformat(timespec='seconds')
         self.info("Concatenated video complete")                
         
     
